@@ -17,7 +17,11 @@ Route::get('/diagnostico-sesion', function (Request $request) {
     return response()->json([
         'sesion_activa' => $request->session()->isStarted(),
         'valor_guardado' => $request->session()->get('prueba'),
-        'session_id' => $request->session()->getId(),
+        'driver' => config('session.driver'),
+        'cookie' => config('session.cookie'),
+        'domain' => config('session.domain'),
+        'secure' => config('session.secure'),
+        'same_site' => config('session.same_site'),
     ]);
 });
 
