@@ -8,6 +8,18 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
+// Diagnóstico temporal de sesiones
+Route::get('/diagnostico-sesion', function (Request $request) {
+    $request->session()->put('prueba', 'LibreApp funciona');
+
+    return response()->json([
+        'sesion_activa' => $request->session()->isStarted(),
+        'valor_guardado' => $request->session()->get('prueba'),
+        'session_id' => $request->session()->getId(),
+    ]);
+});
 
 // Página principal
 Route::get('/', function () {
