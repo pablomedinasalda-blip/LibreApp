@@ -48,6 +48,12 @@ RUN sed -ri "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" \
 # Permitir .htaccess de Laravel
 RUN sed -ri 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
+# Crear directorios necesarios para Laravel
+RUN mkdir -p storage/framework/sessions \
+    storage/framework/cache \
+    storage/framework/views \
+    bootstrap/cache
+
 # Permisos
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
