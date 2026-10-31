@@ -2,39 +2,38 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Loan;
 
 class User extends Authenticatable
 {
-    // Un usuario puede tener muchos préstamos
-     public function loans(): HasMany
-     {
-         return $this->hasMany(Loan::class);
-     }
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Relación: un usuario puede tener muchos préstamos.
+     */
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    /**
+     * Campos que se pueden guardar mediante asignación masiva.
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
+        'documento',
+        'telefono',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Campos ocultos al serializar el usuario.
      */
     protected $hidden = [
         'password',
@@ -42,9 +41,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Conversiones de atributos.
      */
     protected function casts(): array
     {

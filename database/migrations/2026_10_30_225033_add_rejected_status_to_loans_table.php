@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -7,28 +8,32 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("
-            ALTER TABLE loans
-            MODIFY status ENUM(
-                'pending',
-                'active',
-                'returned',
-                'overdue',
-                'rejected'
-            ) NOT NULL DEFAULT 'pending'
-        ");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
+                ALTER TABLE loans
+                MODIFY status ENUM(
+                    'pending',
+                    'active',
+                    'returned',
+                    'overdue',
+                    'rejected'
+                ) NOT NULL DEFAULT 'pending'
+            ");
+        }
     }
 
     public function down(): void
     {
-        DB::statement("
-            ALTER TABLE loans
-            MODIFY status ENUM(
-                'pending',
-                'active',
-                'returned',
-                'overdue'
-            ) NOT NULL DEFAULT 'pending'
-        ");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
+                ALTER TABLE loans
+                MODIFY status ENUM(
+                    'pending',
+                    'active',
+                    'returned',
+                    'overdue'
+                ) NOT NULL DEFAULT 'pending'
+            ");
+        }
     }
 };

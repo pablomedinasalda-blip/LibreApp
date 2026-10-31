@@ -16,7 +16,7 @@ use Illuminate\View\View;
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Mostrar el formulario de registro.
      */
     public function create(): View
     {
@@ -24,29 +24,62 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Handle an incoming registration request.
+     * Procesar el registro de un nuevo usuario.
      *
      * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        // Validar los datos del formulario
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'unique:users,email',
+            ],
+
+            'documento' => [
+                'required',
+                'string',
+                'max:30',
+                'unique:users,documento',
+            ],
+
+            'telefono' => [
+                'required',
+                'string',
+                'max:20',
+            ],
+
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults(),
+            ],
         ]);
 
+        // Crear el usuario en la base de datos
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'documento' => $validated['documento'],
+            'telefono' => $validated['telefono'],
+            'password' => Hash::make($validated['password']),
             'role' => 'reader',
         ]);
 
+        // Disparar evento de registro
         event(new Registered($user));
 
+        // Iniciar sesión automáticamente
         Auth::login($user);
 
+        // Redirigir al panel principal
         return redirect(route('dashboard', absolute: false));
     }
 }
