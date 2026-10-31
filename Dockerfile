@@ -29,6 +29,9 @@ WORKDIR /var/www/html
 # Copiar el proyecto
 COPY . .
 
+# Certificado SSL de TiDB Cloud
+ENV MYSQL_ATTR_SSL_CA=/var/www/html/certs/isrgrootx1.pem
+
 # Copiar frontend compilado
 COPY --from=frontend /app/public/build ./public/build
 
