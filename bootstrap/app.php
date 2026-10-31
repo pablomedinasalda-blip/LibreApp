@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
 
+        // Reconocer las solicitudes HTTPS que llegan desde Render
+        $middleware->trustProxies(at: '*');
+
         // Registrar middleware para controlar roles
         $middleware->alias([
             'role' => RoleMiddleware::class,
