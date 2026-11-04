@@ -111,8 +111,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 */
 
 Route::get('/diagnostico-sesion', function (Request $request) {
+    $session = $request->session();
 
-    $request->session()->put('prueba_sesion', 'funciona');
+    $session->put('prueba_sesion', 'funciona');
 
     return response()->json([
         'entorno' => app()->environment(),
@@ -120,11 +121,11 @@ Route::get('/diagnostico-sesion', function (Request $request) {
         'dominio_cookie' => config('session.domain'),
         'cookie_segura' => config('session.secure'),
         'same_site' => config('session.same_site'),
-        'sesion_iniciada' => $request->hasSession(),
-        'sesion_guardada' => $request->session()->get('prueba_sesion') === 'funciona',
-        'middleware_web' => app('router')->getMiddlewareGroups()['web'] ?? [],
+        'sesion_iniciada' => $session->isStarted(),
+        'sesion_guardada' => $session->get('prueba_sesion') === 'funciona',
+        'id_sesion' => $session->getId(),
+        'cookie_configurada' => config('session.cookie'),
     ]);
-
 });
 
 /*
