@@ -122,6 +122,7 @@ Route::get('/diagnostico-sesion', function (Request $request) {
         'same_site' => config('session.same_site'),
         'sesion_iniciada' => $request->hasSession(),
         'sesion_guardada' => $request->session()->get('prueba_sesion') === 'funciona',
+        'middleware_web' => app('router')->getMiddlewareGroups()['web'] ?? [],
     ]);
 
 });
