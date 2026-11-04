@@ -1,4 +1,3 @@
-
 # Etapa 1: compilar los archivos frontend
 FROM node:22-alpine AS frontend
 
@@ -48,19 +47,19 @@ RUN sed -ri "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" \
 # Permitir .htaccess de Laravel
 RUN sed -ri 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
-# Crear directorios necesarios para Laravel
-RUN mkdir -p storage/framework/sessions \
-    storage/framework/cache \
-    storage/framework/views \
-    bootstrap/cache
+# Crear directorios necesarios para Laravel de forma explícita
+RUN mkdir -p /var/www/html/storage/framework/sessions \
+    /var/www/html/storage/framework/cache \
+    /var/www/html/storage/framework/views \
+    /var/www/html/bootstrap/cache
 
-# Permisos
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+# Asignar permisos correctos al usuario de Apache (www-data) de forma absoluta
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Puerto de Render
 ENV PORT=10000
 EXPOSE 10000
 
-# Iniciar Apache
+# Iniciar Apache configurando el puerto dinámico de Render en caliente
 CMD ["bash", "-c", "sed -i 's/^Listen 80$/Listen ${PORT}/' /etc/apache2/ports.conf && sed -i \"s/<VirtualHost \\\\*:80>/<VirtualHost *:${PORT}>/\" /etc/apache2/sites-available/000-default.conf && apache2-foreground"]
