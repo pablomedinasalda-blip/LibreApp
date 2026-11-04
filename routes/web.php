@@ -1,35 +1,54 @@
-
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoanController;
-use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\AuthorController;
 
-// Página principal
+/*
+|--------------------------------------------------------------------------
+| Página principal
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
-// Catálogo público
+/*
+|--------------------------------------------------------------------------
+| Catálogo público
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/catalogo', [BookController::class, 'catalogIndex'])
     ->name('catalog.index');
 
 Route::get('/catalogo/{book}', [BookController::class, 'catalogShow'])
     ->name('catalog.show');
 
-// Panel principal
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Panel de usuario
+|--------------------------------------------------------------------------
+*/
 
-// Rutas para usuarios autenticados
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| Perfil
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth')->group(function () {
 
-    // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 
@@ -39,37 +58,78 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
-    // Solicitar y consultar préstamos
-    Route::get('/loans/create', [LoanController::class, 'create'])
-        ->name('loans.create');
+});
 
-    Route::post('/loans', [LoanController::class, 'store'])
-        ->name('loans.store');
+/*
+|--------------------------------------------------------------------------
+| Préstamos
+|--------------------------------------------------------------------------
+*/
 
-    Route::get('/loans', [LoanController::class, 'index'])
+Route::middleware('auth')->group(function () {
+
+    Route::get('/mis-prestamos', [LoanController::class, 'index'])
         ->name('loans.index');
 
-    Route::get('/loans/{loan}', [LoanController::class, 'show'])
-        ->name('loans.show');
+    Route::post('/prestamos/{book}', [LoanController::class, 'store'])
+        ->name('loans.store');
 
-    // Gestión exclusiva del administrador
-    Route::middleware('role:admin')->group(function () {
-
-        Route::resource('categories', CategoryController::class);
-
-        Route::resource('authors', AuthorController::class);
-
-        Route::resource('books', BookController::class);
-
-        Route::patch('/loans/{loan}/approve', [LoanController::class, 'approve'])
-            ->name('loans.approve');
-
-        Route::patch('/loans/{loan}/reject', [LoanController::class, 'reject'])
-            ->name('loans.reject');
-
-        Route::patch('/loans/{loan}/return', [LoanController::class, 'returnBook'])
-            ->name('loans.return');
-    });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Administración
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::resource('categorias', CategoryController::class)
+        ->names('categories');
+
+    Route::resource('autores', AuthorController::class)
+        ->names('authors');
+
+    Route::resource('libros', BookController::class)
+        ->names('books');
+
+    Route::patch('/prestamos/{loan}/aprobar', [LoanController::class, 'approve'])
+        ->name('loans.approve');
+
+    Route::patch('/prestamos/{loan}/rechazar', [LoanController::class, 'reject'])
+        ->name('loans.reject');
+
+    Route::patch('/prestamos/{loan}/devolver', [LoanController::class, 'return'])
+        ->name('loans.return');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Diagnóstico temporal de sesiones
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/diagnostico-sesion', function (Request $request) {
+
+    $request->session()->put('prueba_sesion', 'funciona');
+
+    return response()->json([
+        'entorno' => app()->environment(),
+        'controlador_sesion' => config('session.driver'),
+        'dominio_cookie' => config('session.domain'),
+        'cookie_segura' => config('session.secure'),
+        'same_site' => config('session.same_site'),
+        'sesion_iniciada' => $request->hasSession(),
+        'sesion_guardada' => $request->session()->get('prueba_sesion') === 'funciona',
+    ]);
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Autenticación Laravel Breeze
+|--------------------------------------------------------------------------
+*/
 
 require __DIR__.'/auth.php';
