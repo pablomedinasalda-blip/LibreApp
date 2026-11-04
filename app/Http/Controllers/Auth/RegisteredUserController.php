@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -25,8 +24,6 @@ class RegisteredUserController extends Controller
 
     /**
      * Procesar el registro de un nuevo usuario.
-     *
-     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
@@ -43,19 +40,6 @@ class RegisteredUserController extends Controller
                 'unique:users,email',
             ],
 
-            'documento' => [
-                'required',
-                'string',
-                'max:30',
-                'unique:users,documento',
-            ],
-
-            'telefono' => [
-                'required',
-                'string',
-                'max:20',
-            ],
-
             'password' => [
                 'required',
                 'confirmed',
@@ -67,8 +51,6 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'documento' => $validated['documento'],
-            'telefono' => $validated['telefono'],
             'password' => Hash::make($validated['password']),
             'role' => 'reader',
         ]);

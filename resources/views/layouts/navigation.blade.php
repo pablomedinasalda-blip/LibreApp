@@ -141,7 +141,7 @@
                 Dashboard
             </x-responsive-nav-link>
 
-            @if(auth()->user()->role === 'admin')
+            @if(auth()->check() && auth()->user()->role === 'admin')
 
                 <x-responsive-nav-link :href="route('books.index')">
                     Libros
@@ -181,13 +181,19 @@
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
 
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200">
-                    {{ Auth::user()->name }}
-                </div>
+                @auth
+                    <div class="font-medium text-base text-gray-800 dark:text-gray-200">
+                        {{ Auth::user()->name }}
+                    </div>
 
-                <div class="font-medium text-sm text-gray-500">
-                    {{ Auth::user()->email }}
-                </div>
+                    <div class="font-medium text-sm text-gray-500">
+                        {{ Auth::user()->email }}
+                    </div>
+                @else
+                    <div class="font-medium text-base text-gray-800 dark:text-gray-200">
+                        Invitado
+                    </div>
+                @endauth
             </div>
 
             <div class="mt-3 space-y-1">

@@ -8,32 +8,18 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-
-// Diagnóstico temporal de sesiones
-Route::get('/diagnostico-sesion', function (Request $request) {
-    $request->session()->put('prueba', 'LibreApp funciona');
-
-    return response()->json([
-        'sesion_activa' => $request->session()->isStarted(),
-        'valor_guardado' => $request->session()->get('prueba'),
-        'driver' => config('session.driver'),
-        'cookie' => config('session.cookie'),
-        'domain' => config('session.domain'),
-        'secure' => config('session.secure'),
-        'same_site' => config('session.same_site'),
-    ]);
-});
 
 // Página principal
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Catálogo público: no requiere iniciar sesión
 // Catálogo público
-Route::get('/catalogo', [BookController::class, 'catalogIndex'])->name('catalog.index');
-Route::get('/catalogo/{book}', [BookController::class, 'catalogShow'])->name('catalog.show');
+Route::get('/catalogo', [BookController::class, 'catalogIndex'])
+    ->name('catalog.index');
+
+Route::get('/catalogo/{book}', [BookController::class, 'catalogShow'])
+    ->name('catalog.show');
 
 // Panel principal
 Route::get('/dashboard', [DashboardController::class, 'index'])
