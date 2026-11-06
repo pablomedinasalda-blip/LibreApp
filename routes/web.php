@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
@@ -109,30 +108,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::patch('/prestamos/{loan}/devolver', [LoanController::class, 'returnBook'])
         ->name('loans.return');
 
-});
-
-/*
-|--------------------------------------------------------------------------
-| Diagnóstico temporal de sesiones
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/diagnostico-sesion', function (Request $request) {
-    $session = $request->session();
-
-    $session->put('prueba_sesion', 'funciona');
-
-    return response()->json([
-        'entorno' => app()->environment(),
-        'controlador_sesion' => config('session.driver'),
-        'dominio_cookie' => config('session.domain'),
-        'cookie_segura' => config('session.secure'),
-        'same_site' => config('session.same_site'),
-        'sesion_iniciada' => $session->isStarted(),
-        'sesion_guardada' => $session->get('prueba_sesion') === 'funciona',
-        'id_sesion' => $session->getId(),
-        'cookie_configurada' => config('session.cookie'),
-    ]);
 });
 
 /*
