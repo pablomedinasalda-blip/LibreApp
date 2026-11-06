@@ -1,13 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,9 +37,9 @@ Route::get('/catalogo/{book}', [BookController::class, 'catalogShow'])
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -71,8 +71,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/mis-prestamos', [LoanController::class, 'index'])
         ->name('loans.index');
 
-    Route::post('/prestamos/{book}', [LoanController::class, 'store'])
+    Route::get('/prestamos/solicitar', [LoanController::class, 'create'])
+        ->name('loans.create');
+
+    Route::post('/prestamos', [LoanController::class, 'store'])
         ->name('loans.store');
+
+    Route::get('/prestamos/{loan}', [LoanController::class, 'show'])
+        ->name('loans.show');
 
 });
 
@@ -99,33 +105,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::patch('/prestamos/{loan}/rechazar', [LoanController::class, 'reject'])
         ->name('loans.reject');
 
-    Route::patch('/prestamos/{loan}/devolver', [LoanController::class, 'return'])
+    Route::patch('/prestamos/{loan}/devolver', [LoanController::class, 'returnBook'])
         ->name('loans.return');
 
-});
-
-/*
-|--------------------------------------------------------------------------
-| Diagnóstico temporal de sesiones
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/diagnostico-sesion', function (Request $request) {
-    $session = $request->session();
-
-    $session->put('prueba_sesion', 'funciona');
-
-    return response()->json([
-        'entorno' => app()->environment(),
-        'controlador_sesion' => config('session.driver'),
-        'dominio_cookie' => config('session.domain'),
-        'cookie_segura' => config('session.secure'),
-        'same_site' => config('session.same_site'),
-        'sesion_iniciada' => $session->isStarted(),
-        'sesion_guardada' => $session->get('prueba_sesion') === 'funciona',
-        'id_sesion' => $session->getId(),
-        'cookie_configurada' => config('session.cookie'),
-    ]);
 });
 
 /*
