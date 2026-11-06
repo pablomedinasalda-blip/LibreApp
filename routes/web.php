@@ -8,6 +8,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,9 +38,9 @@ Route::get('/catalogo/{book}', [BookController::class, 'catalogShow'])
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -71,8 +72,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/mis-prestamos', [LoanController::class, 'index'])
         ->name('loans.index');
 
-    Route::post('/prestamos/{book}', [LoanController::class, 'store'])
+    Route::get('/prestamos/solicitar', [LoanController::class, 'create'])
+        ->name('loans.create');
+
+    Route::post('/prestamos', [LoanController::class, 'store'])
         ->name('loans.store');
+
+    Route::get('/prestamos/{loan}', [LoanController::class, 'show'])
+        ->name('loans.show');
 
 });
 
@@ -99,7 +106,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::patch('/prestamos/{loan}/rechazar', [LoanController::class, 'reject'])
         ->name('loans.reject');
 
-    Route::patch('/prestamos/{loan}/devolver', [LoanController::class, 'return'])
+    Route::patch('/prestamos/{loan}/devolver', [LoanController::class, 'returnBook'])
         ->name('loans.return');
 
 });
