@@ -1,0 +1,44 @@
+# Entorno local con la misma imagen de producción (Dockerfile sin cambios).
+# Uso:
+#   cp .env.docker.example .env.docker   (y completar APP_KEY y contraseñas locales)
+#   docker compose -f compose.local.yaml up -d --build
+# Solo usa la base MySQL local de este archivo; nunca TiDB Cloud.
+
+name: libreapp-local
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: libreapp:local
+    env_file: .env.docker
+    environment:
+      # El Dockerfile apunta al certificado de TiDB Cloud; la base local no usa SSL.
+      MYSQL_ATTR_SSL_CA: ""
+    ports:
+      - "127.0.0.1:8080:10000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - libreapp-local
+
+  db:
+    image: mysql:8.4
+    env_file: .env.docker
+    volumes:
+      - libreapp-mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks:
+      - libreapp-local
+
+volumes:
+  libreapp-mysql:
+
+networks:
+  libreapp-local:
