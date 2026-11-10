@@ -75,6 +75,16 @@
                 >
 
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
+
+                {{-- Recuperar contraseña --}}
+                @if (Route::has('password.request'))
+                    <div class="flex justify-end mt-3">
+                        <a href="{{ route('password.request') }}"
+                           class="text-sm font-semibold text-[#294c72] hover:text-[#d9a441] hover:underline">
+                            ¿Olvidaste tu contraseña?
+                        </a>
+                    </div>
+                @endif
             </div>
 
             {{-- Recordarme --}}
@@ -97,25 +107,25 @@
             <button
                 type="submit"
                 style="
-        display: block;
-        width: 100%;
-        padding: 16px;
-        background-color: #172b4d;
-        color: #ffffff !important;
-        border: none;
-        border-radius: 12px;
-        font-size: 16px;
-        font-weight: 700;
-        text-align: center;
-        cursor: pointer;
-        margin-top: 20px;
-        opacity: 1;
-        visibility: visible;
-    "
+                    display: block;
+                    width: 100%;
+                    padding: 16px;
+                    background-color: #172b4d;
+                    color: #ffffff !important;
+                    border: none;
+                    border-radius: 12px;
+                    font-size: 16px;
+                    font-weight: 700;
+                    text-align: center;
+                    cursor: pointer;
+                    margin-top: 20px;
+                    opacity: 1;
+                    visibility: visible;
+                "
             >
-    <span style="color: #ffffff !important;">
-        Iniciar sesión
-    </span>
+                <span style="color: #ffffff !important;">
+                    Iniciar sesión
+                </span>
             </button>
 
         </form>
