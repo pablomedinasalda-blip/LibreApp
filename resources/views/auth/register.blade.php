@@ -1,86 +1,162 @@
+
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
 
-        <!-- Nombre -->
-        <div>
-            <x-input-label for="name" value="Nombre completo" />
+    <div class="w-full">
 
-            <x-text-input
-                id="name"
-                class="block mt-1 w-full"
-                type="text"
-                name="name"
-                :value="old('name')"
-                required
-                autofocus
-                autocomplete="name"
-            />
+        {{-- Encabezado --}}
+        <div class="text-center mb-8">
 
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-2xl bg-[#172b4d] shadow-lg mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     class="w-9 h-9 text-[#d9a441]"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke="currentColor"
+                     stroke-width="1.7">
+                    <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 7v14m0-14C10.5 5.5 8.5 5 5 5v14c3.5 0 5.5.5 7 2m0-14c1.5-1.5 3.5-2 7-2v14c-3.5 0-5.5.5-7 2"/>
+                </svg>
+            </div>
+
+            <h1 class="text-3xl font-extrabold text-[#172b4d]">
+                Crear una cuenta
+            </h1>
+
+            <p class="mt-2 text-sm text-gray-500">
+                Únete a LibreApp y descubre un mundo de lectura.
+            </p>
+
         </div>
 
-        <!-- Correo electrónico -->
-        <div class="mt-4">
-            <x-input-label for="email" value="Correo electrónico" />
+        {{-- Formulario de registro --}}
+        <form method="POST" action="{{ route('register') }}" class="space-y-4">
+            @csrf
 
-            <x-text-input
-                id="email"
-                class="block mt-1 w-full"
-                type="email"
-                name="email"
-                :value="old('email')"
-                required
-                autocomplete="username"
-            />
+            {{-- Nombre --}}
+            <div>
+                <label for="name" class="block text-sm font-semibold text-[#172b4d] mb-2">
+                    Nombre completo
+                </label>
 
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+                <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    value="{{ old('name') }}"
+                    required
+                    autofocus
+                    autocomplete="name"
+                    placeholder="Ingresa tu nombre completo"
+                    class="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 placeholder-gray-400 shadow-sm transition focus:border-[#294c72] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#294c72]/20"
+                >
 
-        <!-- Contraseña -->
-        <div class="mt-4">
-            <x-input-label for="password" value="Contraseña" />
+                <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            </div>
 
-            <x-text-input
-                id="password"
-                class="block mt-1 w-full"
-                type="password"
-                name="password"
-                required
-                autocomplete="new-password"
-            />
+            {{-- Correo electrónico --}}
+            <div>
+                <label for="email" class="block text-sm font-semibold text-[#172b4d] mb-2">
+                    Correo electrónico
+                </label>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    required
+                    autocomplete="username"
+                    placeholder="ejemplo@correo.com"
+                    class="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 placeholder-gray-400 shadow-sm transition focus:border-[#294c72] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#294c72]/20"
+                >
 
-        <!-- Confirmar contraseña -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" value="Confirmar contraseña" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
 
-            <x-text-input
-                id="password_confirmation"
-                class="block mt-1 w-full"
-                type="password"
-                name="password_confirmation"
-                required
-                autocomplete="new-password"
-            />
+            {{-- Contraseña --}}
+            <div>
+                <label for="password" class="block text-sm font-semibold text-[#172b4d] mb-2">
+                    Contraseña
+                </label>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    required
+                    autocomplete="new-password"
+                    placeholder="Crea una contraseña"
+                    class="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 placeholder-gray-400 shadow-sm transition focus:border-[#294c72] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#294c72]/20"
+                >
 
-        <!-- Botones -->
-        <div class="flex items-center justify-end mt-4">
-            <a
-                class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                href="{{ route('login') }}"
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
+
+            {{-- Confirmar contraseña --}}
+            <div>
+                <label for="password_confirmation" class="block text-sm font-semibold text-[#172b4d] mb-2">
+                    Confirmar contraseña
+                </label>
+
+                <input
+                    id="password_confirmation"
+                    type="password"
+                    name="password_confirmation"
+                    required
+                    autocomplete="new-password"
+                    placeholder="Repite tu contraseña"
+                    class="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-800 placeholder-gray-400 shadow-sm transition focus:border-[#294c72] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#294c72]/20"
+                >
+
+                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            </div>
+
+            {{-- Botón de registro --}}
+            <button
+                type="submit"
+                style="
+                    display: block;
+                    width: 100%;
+                    padding: 15px;
+                    background-color: #172b4d;
+                    color: #ffffff;
+                    border: none;
+                    border-radius: 12px;
+                    font-size: 15px;
+                    font-weight: bold;
+                    text-align: center;
+                    cursor: pointer;
+                    margin-top: 24px;
+                "
             >
+                Registrarme
+            </button>
+
+        </form>
+
+        {{-- Enlace para iniciar sesión --}}
+        <div class="mt-7 border-t border-gray-200 pt-6 text-center">
+
+            <p class="text-sm text-gray-500">
                 ¿Ya tienes una cuenta?
+            </p>
+
+            <a
+                href="{{ route('login') }}"
+                class="mt-2 inline-block font-bold text-[#294c72] transition hover:text-[#d9a441]"
+            >
+                Iniciar sesión
             </a>
 
-            <x-primary-button class="ms-4">
-                Registrarse
-            </x-primary-button>
         </div>
-    </form>
+
+        {{-- Pie de página --}}
+        <p class="mt-8 text-center text-xs text-gray-400">
+            © {{ date('Y') }} LibreApp Biblioteca Virtual.
+            Todos los derechos reservados.
+        </p>
+
+    </div>
+
 </x-guest-layout>

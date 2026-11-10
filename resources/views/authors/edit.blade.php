@@ -1,99 +1,111 @@
-
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Editar autor
-        </h2>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 45px; height: 45px; background: #172b4d; color: #d9a441; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                ✍️
+            </div>
+
+            <div>
+                <h2 style="font-size: 25px; font-weight: 800; color: #172b4d; margin: 0;">
+                    Editar autor
+                </h2>
+                <p style="font-size: 13px; color: #64748b; margin: 4px 0 0;">
+                    Actualiza la información del autor seleccionado.
+                </p>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div style="padding: 30px; max-width: 950px; margin: 0 auto;">
 
-            <div class="bg-white p-6 shadow-sm sm:rounded-lg">
+        <div style="background: #ffffff; border-radius: 18px; padding: 32px; box-shadow: 0 8px 25px rgba(23, 43, 77, 0.08); border: 1px solid #e5eaf1;">
 
-                <form action="{{ route('authors.update', $author) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <!-- Nombre del autor -->
-                    <div class="mb-4">
-                        <label for="name" class="block font-medium text-gray-700">
-                            Nombre del autor
-                        </label>
-
-                        <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            value="{{ old('name', $author->name) }}"
-                            class="w-full border-gray-300 rounded-md shadow-sm"
-                            required
-                        >
-
-                        @error('name')
-                        <p class="text-red-600 text-sm">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Nacionalidad -->
-                    <div class="mb-4">
-                        <label for="nationality" class="block font-medium text-gray-700">
-                            Nacionalidad
-                        </label>
-
-                        <input
-                            type="text"
-                            name="nationality"
-                            id="nationality"
-                            value="{{ old('nationality', $author->nationality) }}"
-                            class="w-full border-gray-300 rounded-md shadow-sm"
-                        >
-
-                        @error('nationality')
-                        <p class="text-red-600 text-sm">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Biografía -->
-                    <div class="mb-4">
-                        <label for="bio" class="block font-medium text-gray-700">
-                            Biografía
-                        </label>
-
-                        <textarea
-                            name="bio"
-                            id="bio"
-                            rows="5"
-                            class="w-full border-gray-300 rounded-md shadow-sm"
-                        >{{ old('bio', $author->bio) }}</textarea>
-
-                        @error('bio')
-                        <p class="text-red-600 text-sm">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="flex items-center gap-3">
-
-                        <button
-                            type="submit"
-                            style="background-color: #2563eb; color: white; padding: 10px 16px; border-radius: 6px; border: none; cursor: pointer;"
-                        >
-                            Actualizar autor
-                        </button>
-
-                        <a
-                            href="{{ route('authors.index') }}"
-                            style="background-color: #6b7280; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none;"
-                        >
-                            Cancelar
-                        </a>
-
-                    </div>
-
-                </form>
-
+            <div style="border-bottom: 2px solid #f0f2f5; padding-bottom: 18px; margin-bottom: 25px;">
+                <h3 style="font-size: 19px; font-weight: 800; color: #172b4d; margin: 0;">
+                    Información del autor
+                </h3>
+                <p style="font-size: 13px; color: #64748b; margin-top: 6px;">
+                    Modifica los campos que necesites y guarda los cambios.
+                </p>
             </div>
+
+            <form action="{{ route('authors.update', $author) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div style="margin-bottom: 22px;">
+                    <label for="name" style="display: block; font-size: 14px; font-weight: 700; color: #172b4d; margin-bottom: 8px;">
+                        Nombre del autor
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        value="{{ old('name', $author->name) }}"
+                        required
+                        style="display: block; width: 100%; box-sizing: border-box; padding: 13px 15px; border: 1px solid #cbd5e1; border-radius: 9px; background: #f8fafc; color: #172b4d;"
+                    >
+
+                    @error('name')
+                    <p style="color: #dc2626; font-size: 13px; margin-top: 7px;">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div style="margin-bottom: 22px;">
+                    <label for="nationality" style="display: block; font-size: 14px; font-weight: 700; color: #172b4d; margin-bottom: 8px;">
+                        Nacionalidad
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nationality"
+                        id="nationality"
+                        value="{{ old('nationality', $author->nationality) }}"
+                        style="display: block; width: 100%; box-sizing: border-box; padding: 13px 15px; border: 1px solid #cbd5e1; border-radius: 9px; background: #f8fafc; color: #172b4d;"
+                    >
+
+                    @error('nationality')
+                    <p style="color: #dc2626; font-size: 13px; margin-top: 7px;">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label for="bio" style="display: block; font-size: 14px; font-weight: 700; color: #172b4d; margin-bottom: 8px;">
+                        Biografía
+                    </label>
+
+                    <textarea
+                        name="bio"
+                        id="bio"
+                        rows="6"
+                        style="display: block; width: 100%; box-sizing: border-box; padding: 13px 15px; border: 1px solid #cbd5e1; border-radius: 9px; background: #f8fafc; color: #172b4d; resize: vertical;"
+                    >{{ old('bio', $author->bio) }}</textarea>
+
+                    @error('bio')
+                    <p style="color: #dc2626; font-size: 13px; margin-top: 7px;">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 12px; border-top: 1px solid #e5eaf1; padding-top: 22px;">
+
+                    <button
+                        type="submit"
+                        style="background: #172b4d; color: #ffffff; padding: 13px 23px; border: none; border-radius: 9px; cursor: pointer; font-size: 14px; font-weight: 700; box-shadow: 0 4px 10px rgba(23, 43, 77, 0.18);"
+                    >
+                        Actualizar autor
+                    </button>
+
+                    <a
+                        href="{{ route('authors.index') }}"
+                        style="background: #e8edf4; color: #172b4d; padding: 13px 23px; border-radius: 9px; text-decoration: none; font-size: 14px; font-weight: 700;"
+                    >
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
         </div>
     </div>
 </x-app-layout>

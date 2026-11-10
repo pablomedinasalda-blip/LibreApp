@@ -1,87 +1,147 @@
-
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Gestión de categorías
-        </h2>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 45px; height: 45px; background: #172b4d; color: #d9a441; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                📂
+            </div>
+
+            <div>
+                <h2 style="font-size: 25px; font-weight: 800; color: #172b4d; margin: 0;">
+                    Gestión de categorías
+                </h2>
+                <p style="font-size: 13px; color: #64748b; margin: 4px 0 0;">
+                    Organiza y administra las categorías de la biblioteca.
+                </p>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div style="padding: 30px; max-width: 1500px; margin: 0 auto;">
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+        <div style="background: #ffffff; border-radius: 18px; padding: 28px; box-shadow: 0 8px 25px rgba(23, 43, 77, 0.08); border: 1px solid #e5eaf1;">
 
-                <div class="mb-6 flex items-center justify-between">
-                    <h3 class="text-lg font-semibold">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+
+                <div>
+                    <h3 style="font-size: 20px; font-weight: 800; color: #172b4d; margin: 0;">
                         Lista de categorías
                     </h3>
-
-                    <a href="{{ route('categories.create') }}"
-                       style="background-color: #2563eb; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none;">
-                        + Nueva categoría
-                    </a>
+                    <p style="font-size: 13px; color: #64748b; margin-top: 5px;">
+                        Consulta, modifica o elimina las categorías registradas.
+                    </p>
                 </div>
 
-                @if (session('success'))
-                    <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
-                        {{ session('success') }}
-                    </div>
-                @endif
+                <a href="{{ route('categories.create') }}"
+                   style="display: inline-block; background: #172b4d; color: #ffffff; padding: 12px 20px; border-radius: 9px; text-decoration: none; font-size: 14px; font-weight: 700; box-shadow: 0 4px 10px rgba(23, 43, 77, 0.18);">
+                    + Nueva categoría
+                </a>
 
-                <table class="w-full border-collapse border border-gray-300">
+            </div>
+
+            @if (session('success'))
+                <div style="background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; padding: 14px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px;">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 12px;">
+
+                <table style="width: 100%; border-collapse: collapse; min-width: 750px;">
+
                     <thead>
-                    <tr class="bg-gray-100">
-                        <th class="border p-3">ID</th>
-                        <th class="border p-3">Nombre</th>
-                        <th class="border p-3">Slug</th>
-                        <th class="border p-3">Descripción</th>
-                        <th class="border p-3">Acciones</th>
+                    <tr style="background: #172b4d; color: #ffffff;">
+
+                        <th style="padding: 16px; text-align: left; font-size: 13px; font-weight: 700;">
+                            ID
+                        </th>
+
+                        <th style="padding: 16px; text-align: left; font-size: 13px; font-weight: 700;">
+                            Nombre
+                        </th>
+
+                        <th style="padding: 16px; text-align: left; font-size: 13px; font-weight: 700;">
+                            Slug
+                        </th>
+
+                        <th style="padding: 16px; text-align: left; font-size: 13px; font-weight: 700;">
+                            Descripción
+                        </th>
+
+                        <th style="padding: 16px; text-align: center; font-size: 13px; font-weight: 700;">
+                            Acciones
+                        </th>
+
                     </tr>
                     </thead>
 
                     <tbody>
-                    @forelse ($categories as $category)
-                        <tr>
-                            <td class="border p-3">{{ $category->id }}</td>
-                            <td class="border p-3">{{ $category->name }}</td>
-                            <td class="border p-3">{{ $category->slug }}</td>
-                            <td class="border p-3">{{ $category->description }}</td>
 
-                            <td class="border p-3">
+                    @forelse ($categories as $category)
+
+                        <tr style="border-bottom: 1px solid #e5eaf1; background: #ffffff;">
+
+                            <td style="padding: 15px 16px; color: #64748b; font-size: 13px;">
+                                #{{ $category->id }}
+                            </td>
+
+                            <td style="padding: 15px 16px; color: #172b4d; font-size: 14px; font-weight: 700;">
+                                {{ $category->name }}
+                            </td>
+
+                            <td style="padding: 15px 16px; color: #475569; font-size: 13px;">
+                                {{ $category->slug }}
+                            </td>
+
+                            <td style="padding: 15px 16px; color: #64748b; font-size: 13px; max-width: 300px;">
+                                {{ $category->description }}
+                            </td>
+
+                            <td style="padding: 15px 16px; text-align: center; white-space: nowrap;">
+
+                                <a href="{{ route('categories.show', $category) }}"
+                                   style="display: inline-block; background: #ecfdf5; color: #15803d; padding: 8px 11px; border-radius: 7px; text-decoration: none; font-size: 12px; font-weight: 700; margin: 2px;">
+                                    Ver
+                                </a>
+
                                 <a href="{{ route('categories.edit', $category) }}"
-                                   class="text-blue-600">
-                                    <a href="{{ route('categories.show', $category) }}"
-                                       style="color: #15803d; margin-right: 10px;">
-                                        Ver
-                                    </a>
+                                   style="display: inline-block; background: #eff6ff; color: #1d4ed8; padding: 8px 11px; border-radius: 7px; text-decoration: none; font-size: 12px; font-weight: 700; margin: 2px;">
                                     Editar
                                 </a>
 
                                 <form action="{{ route('categories.destroy', $category) }}"
                                       method="POST"
-                                      class="inline">
+                                      style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
 
                                     <button type="submit"
                                             onclick="return confirm('¿Deseas eliminar esta categoría?')"
-                                            class="text-red-600 ml-2">
+                                            style="background: #fef2f2; color: #dc2626; border: none; padding: 8px 11px; border-radius: 7px; cursor: pointer; font-size: 12px; font-weight: 700; margin: 2px;">
                                         Eliminar
                                     </button>
                                 </form>
+
                             </td>
+
                         </tr>
+
                     @empty
+
                         <tr>
-                            <td colspan="5" class="text-center p-4">
+                            <td colspan="5" style="text-align: center; padding: 35px 20px; color: #64748b; font-size: 14px;">
+                                <div style="font-size: 32px; margin-bottom: 10px;">
+                                    📂
+                                </div>
                                 Todavía no hay categorías registradas.
                             </td>
                         </tr>
+
                     @endforelse
+
                     </tbody>
                 </table>
-
             </div>
+
         </div>
     </div>
 </x-app-layout>
