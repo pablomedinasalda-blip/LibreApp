@@ -15,7 +15,7 @@
             </h3>
 
             <p style="margin-bottom: 12px;">
-                <strong>ID:</strong> {{ $book->id }}
+                <strong>ID:</strong> {{ $book->id ?? 'ID VACÍO' }}
             </p>
 
             <p style="margin-bottom: 12px;">
@@ -59,12 +59,12 @@
 
             <p style="margin-bottom: 20px;">
                 <strong>Fecha de registro:</strong>
-                {{ $book->created_at->format('d/m/Y H:i') }}
+                {{ $book->created_at ? $book->created_at->format('d/m/Y H:i') : 'No disponible' }}
             </p>
 
             <div style="margin-top: 25px;">
 
-                <a href="{{ route('books.edit', $book) }}"
+                <a href="{{ route('books.edit', $book->id) }}"
                    style="background-color: #2563eb; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none;">
                     Editar libro
                 </a>

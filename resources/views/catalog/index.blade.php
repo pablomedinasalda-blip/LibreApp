@@ -1,4 +1,3 @@
-
 <x-app-layout>
 
     <div style="max-width:1400px; margin:0 auto; padding:25px 0 40px;">
@@ -172,6 +171,15 @@
                         {{-- PORTADA --}}
                         @if($book->cover_image)
 
+                            @php
+                                $coverUrl = str_starts_with($book->cover_image, 'portadas/')
+                                    ? \Illuminate\Support\Facades\Storage::disk('s3')->temporaryUrl(
+                                        $book->cover_image,
+                                        now()->addMinutes(15)
+                                    )
+                                    : $book->cover_image;
+                            @endphp
+
                             <div style="
                                 height:235px;
                                 display:flex;
@@ -183,7 +191,7 @@
                                 overflow:hidden;
                             ">
                                 <img
-                                    src="{{ $book->cover_image }}"
+                                    src="{{ $coverUrl }}"
                                     alt="Portada de {{ $book->title }}"
                                     style="
                                         width:100%;

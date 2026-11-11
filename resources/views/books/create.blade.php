@@ -3,7 +3,7 @@
     <x-slot name="header">
         <div style="display: flex; align-items: center; gap: 12px;">
             <div style="width: 45px; height: 45px; background: #d9a441; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 23px;">
-                📚
+
             </div>
 
             <div>
@@ -33,7 +33,7 @@
                 </p>
             </div>
 
-            <form action="{{ route('books.store') }}" method="POST" style="padding: 28px;">
+            <form action="{{ route('books.store') }}" method="POST" enctype="multipart/form-data" style="padding: 28px;">
                 @csrf
 
                 {{-- Título --}}
@@ -179,13 +179,16 @@
                 {{-- Imagen de portada --}}
                 <div style="margin-bottom: 20px;">
                     <label for="cover_image" style="display: block; margin-bottom: 8px; color: #172b4d; font-weight: 800; font-size: 14px;">
-                        Ruta de imagen de portada (opcional)
+                        Imagen de portada (opcional)
                     </label>
 
-                    <input type="text" id="cover_image" name="cover_image"
-                           value="{{ old('cover_image') }}"
-                           placeholder="Ejemplo: portadas/libro.jpg"
+                    <input type="file" id="cover_image" name="cover_image"
+                           accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                            style="display: block; width: 100%; padding: 13px 14px; border: 1px solid #cbd5e1; border-radius: 9px; background: #f8fafc; color: #334155; font-size: 14px;">
+
+                    <p style="color: #64748b; font-size: 12px; margin-top: 7px;">
+                        Formatos permitidos: JPG, JPEG, PNG y WEBP. Tamaño máximo: 2 MB.
+                    </p>
 
                     @error('cover_image')
                     <p style="color: #dc2626; font-size: 13px; margin-top: 6px;">{{ $message }}</p>

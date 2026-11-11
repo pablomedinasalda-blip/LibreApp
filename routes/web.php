@@ -97,6 +97,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->names('authors');
 
     Route::resource('libros', BookController::class)
+        ->parameters(['libros' => 'book'])
         ->names('books');
 
     Route::patch('/prestamos/{loan}/aprobar', [LoanController::class, 'approve'])

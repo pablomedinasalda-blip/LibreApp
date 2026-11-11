@@ -2,7 +2,6 @@
     <x-slot name="header">
         <div style="display: flex; align-items: center; gap: 12px;">
             <div style="width: 45px; height: 45px; background: #172b4d; color: #d9a441; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">
-
             </div>
 
             <div>
@@ -29,7 +28,7 @@
                 </p>
             </div>
 
-            <form action="{{ route('books.update', $book) }}" method="POST">
+            <form action="{{ route('books.update', $book) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -146,11 +145,27 @@
 
                 <div style="margin-top: 20px; margin-bottom: 20px;">
                     <label for="cover_image" style="display: block; font-size: 14px; font-weight: 700; color: #172b4d; margin-bottom: 8px;">
-                        Ruta de imagen de portada
+                        Cambiar imagen de portada
                     </label>
-                    <input type="text" id="cover_image" name="cover_image"
-                           value="{{ old('cover_image', $book->cover_image) }}"
+
+                    @if($book->cover_image)
+                        <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">
+                            Este libro ya tiene una portada guardada. Si no seleccionas otra imagen, se conservará la actual.
+                        </p>
+                    @else
+                        <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">
+                            Este libro todavía no tiene una portada.
+                        </p>
+                    @endif
+
+                    <input type="file" id="cover_image" name="cover_image"
+                           accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                            style="display: block; width: 100%; box-sizing: border-box; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 9px; background: #f8fafc; color: #172b4d;">
+
+                    <p style="font-size: 12px; color: #64748b; margin-top: 7px;">
+                        Formatos permitidos: JPG, JPEG, PNG y WEBP. Tamaño máximo: 2 MB.
+                    </p>
+
                     @error('cover_image')
                     <p style="color: #dc2626; font-size: 13px; margin-top: 6px;">{{ $message }}</p>
                     @enderror

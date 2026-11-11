@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Author;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -29,7 +30,7 @@ class BookController extends Controller
     // Guardar un nuevo libro
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'author_id' => 'required|exists:authors,id',
             'title' => 'required|string|max:191',
@@ -38,20 +39,35 @@ class BookController extends Controller
             'year' => 'nullable|integer|min:1000|max:9999',
             'copies_total' => 'required|integer|min:1',
             'copies_available' => 'required|integer|min:0|lte:copies_total',
-            'cover_image' => 'nullable|string|max:191',
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'active' => 'nullable|boolean',
         ]);
 
+        // Subir portada a Backblaze B2
+        $coverPath = null;
+
+        if ($request->hasFile('cover_image')) {
+            $coverPath = $request->file('cover_image')->store('portadas', 's3');
+
+            if (!$coverPath) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'cover_image' => 'No fue posible subir la portada. Inténtalo nuevamente.',
+                    ]);
+            }
+        }
+
         Book::create([
-            'category_id' => $request->category_id,
-            'author_id' => $request->author_id,
-            'title' => $request->title,
-            'isbn' => $request->isbn,
-            'description' => $request->description,
-            'year' => $request->year,
-            'copies_total' => $request->copies_total,
-            'copies_available' => $request->copies_available,
-            'cover_image' => $request->cover_image,
+            'category_id' => $validated['category_id'],
+            'author_id' => $validated['author_id'],
+            'title' => $validated['title'],
+            'isbn' => $validated['isbn'],
+            'description' => $validated['description'] ?? null,
+            'year' => $validated['year'] ?? null,
+            'copies_total' => $validated['copies_total'],
+            'copies_available' => $validated['copies_available'],
+            'cover_image' => $coverPath,
             'active' => $request->boolean('active'),
         ]);
 
@@ -79,7 +95,7 @@ class BookController extends Controller
     // Actualizar un libro
     public function update(Request $request, Book $book)
     {
-        $request->validate([
+        $validated = $request->validate([
             'category_id' => 'required|exists:categories,id',
             'author_id' => 'required|exists:authors,id',
             'title' => 'required|string|max:191',
@@ -88,22 +104,51 @@ class BookController extends Controller
             'year' => 'nullable|integer|min:1000|max:9999',
             'copies_total' => 'required|integer|min:1',
             'copies_available' => 'required|integer|min:0|lte:copies_total',
-            'cover_image' => 'nullable|string|max:191',
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'active' => 'nullable|boolean',
         ]);
 
+        // Conservar la portada actual si no se selecciona otra
+        $coverPath = $book->cover_image;
+
+        // Subir la nueva portada a Backblaze B2
+        if ($request->hasFile('cover_image')) {
+            $newCoverPath = $request->file('cover_image')->store('portadas', 's3');
+
+            if (!$newCoverPath) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'cover_image' => 'No fue posible subir la nueva portada. Inténtalo nuevamente.',
+                    ]);
+            }
+
+            $coverPath = $newCoverPath;
+        }
+
+        $oldCoverPath = $book->cover_image;
+
         $book->update([
-            'category_id' => $request->category_id,
-            'author_id' => $request->author_id,
-            'title' => $request->title,
-            'isbn' => $request->isbn,
-            'description' => $request->description,
-            'year' => $request->year,
-            'copies_total' => $request->copies_total,
-            'copies_available' => $request->copies_available,
-            'cover_image' => $request->cover_image,
+            'category_id' => $validated['category_id'],
+            'author_id' => $validated['author_id'],
+            'title' => $validated['title'],
+            'isbn' => $validated['isbn'],
+            'description' => $validated['description'] ?? null,
+            'year' => $validated['year'] ?? null,
+            'copies_total' => $validated['copies_total'],
+            'copies_available' => $validated['copies_available'],
+            'cover_image' => $coverPath,
             'active' => $request->boolean('active'),
         ]);
+
+        // Eliminar la portada anterior solamente si era un archivo de Backblaze
+        if (
+            $request->hasFile('cover_image') &&
+            $oldCoverPath &&
+            str_starts_with($oldCoverPath, 'portadas/')
+        ) {
+            Storage::disk('s3')->delete($oldCoverPath);
+        }
 
         return redirect()->route('books.index')
             ->with('success', 'Libro actualizado correctamente.');
@@ -117,7 +162,15 @@ class BookController extends Controller
                 ->with('error', 'No se puede eliminar este libro porque tiene préstamos asociados.');
         }
 
+        // Guardar la ruta de la portada antes de eliminar el libro
+        $coverPath = $book->cover_image;
+
         $book->delete();
+
+        // Eliminar la portada de Backblaze si corresponde
+        if ($coverPath && str_starts_with($coverPath, 'portadas/')) {
+            Storage::disk('s3')->delete($coverPath);
+        }
 
         return redirect()->route('books.index')
             ->with('success', 'Libro eliminado correctamente.');
@@ -135,10 +188,10 @@ class BookController extends Controller
 
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('isbn', 'like', "%{$search}%")
-                  ->orWhereHas('author', function ($authorQuery) use ($search) {
-                      $authorQuery->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('isbn', 'like', "%{$search}%")
+                    ->orWhereHas('author', function ($authorQuery) use ($search) {
+                        $authorQuery->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -156,5 +209,4 @@ class BookController extends Controller
 
         return view('catalog.show', compact('book'));
     }
-
 }
